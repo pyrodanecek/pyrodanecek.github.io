@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PyroDan - Products</title>
+  <!-- Example Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Body Setup */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Dosis', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
+      background-color: #fff;
+    }
+    header {
+      position: relative;
+      padding: 20px;
+    }
+    .logo {
+      max-width: 300px;
+      height: auto;
+    }
+    /* Cart Icon (top-right) */
+    #cartIcon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    /* CART POPUP */
+    .cart-popup {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      width: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 16px;
+      display: none;
+      z-index: 999;
+      text-align: left;
+    }
+    .cart-popup-header {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .divider {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+    .cart-items {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .cart-item-image {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-size: 0.95rem;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    .cart-item-price {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .cart-item-remove {
+      cursor: pointer;
+      font-weight: bold;
+      color: #999;
+      margin-left: 8px;
+    }
+    .cart-item-remove:hover {
+      color: #000;
+    }
+    .cart-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .buy-button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      background-color: #2962ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .buy-button:hover {
+      background-color: #0039cb;
+    }
+    /* Main Content: Product Grid */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .grid-item {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .grid-item:hover {
+      transform: scale(1.02);
+    }
+    .grid-item img {
+      max-width: 120px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    .grid-item p {
+      font-size: 1rem;
+      color: #333;
+    }
+    footer {
+      background-color: #808080;
+      padding: 15px 0;
+      color: #fff;
+    }
+
+    /* Media Query: For screens 1000x1000 or lower, scale up sizes */
+    @media screen and (max-width: 1000px) and (max-height: 1000px) {
+      header {
+        padding: 40px;
+      }
+      .logo {
+        max-width: 350px;
+      }
+      #cartIcon {
+        font-size: 2rem;
+      }
+      .cart-popup {
+        width: 400px;
+        top: 80px;
+        padding: 24px;
+      }
+      .cart-popup-header {
+        font-size: 1.5rem;
+      }
+      .cart-item-image {
+        width: 70px;
+        height: 70px;
+      }
+      .cart-item-name {
+        font-size: 1.5rem;
+      }
+      .cart-item-price {
+        font-size: 1.3rem;
+      }
+      .buy-button {
+        font-size: 1.8rem;
+        padding: 20px;
+      }
+      .grid-item p {
+        font-size: 1.5rem;
+      }
+      .grid-item img {
+        max-width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <img
+      src="https://assets.onecompiler.app/4386r6d8v/43c3mrcry/image%20(18).png"
+      alt="PyroDan Logo"
+      class="logo"
+    >
+    <div id="cartIcon">
+      🛒 (<span id="cartCount">0</span>)
+    </div>
+    <p>www.pyrodan.cz</p>
+
+    <!-- CART POPUP -->
+    <div class="cart-popup" id="cartPopup">
+      <div class="cart-popup-header">
+        Košík (<span id="cartCountPopup">0</span>)
+      </div>
+      <div class="divider"></div>
+      <div class="cart-items" id="cartItemsPopup">
+        <!-- Items injected here -->
+      </div>
+      <div class="cart-footer">
+        <span>Total: <span id="itemCountPopup">0</span> položky</span>
+        <span id="totalPricePopup">0 Kč</span>
+      </div>
+      <button class="buy-button" id="buyButtonPopup">Koupit</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT: Grid of Products -->
+  <main>
+    <div class="grid-container" id="productsGrid">
+      <!-- Dynamically loaded items go here -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 PyroDan. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Simple "database" of products
+    const products = [
+      { 
+        id: 1,  
+        name: 'Mini Ro',            
+        price: 75,
+        info: 'Tiny but mighty!',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/image-removebg-preview.png'
+      },
+      { 
+        id: 2,  
+        name: 'Pyro Box',           
+        price: 150,
+        info: 'A box of surprises.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/image-removebg-preview%20(1).png'
+      },
+      { 
+        id: 3,  
+        name: 'Zapalovač',         
+        price: 30,
+        info: 'A handy lighter.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(77).png'
+      },
+      { 
+        id: 4,  
+        name: 'Pyro Floor',        
+        price: 90,
+        info: 'Sparkling ground effect.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(95).png'
+      },
+      { 
+        id: 5,  
+        name: 'Extra Ro',          
+        price: 120,
+        info: 'Extra bright rocket.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(96).png'
+      },
+      { 
+        id: 6,  
+        name: 'MegaDan',           
+        price: 200,
+        info: 'Biggest, boldest show.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(97).png'
+      },
+      { 
+        id: 7,  
+        name: 'Extra Cinema City', 
+        price: 250,
+        info: 'Cinematic fireworks.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(98).png'
+      },
+      { 
+        id: 8,  
+        name: 'Dan Shoes',         
+        price: 45,
+        info: 'Flame-resistant shoes.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(99).png'
+      },
+      { 
+        id: 9,  
+        name: 'McDan',             
+        price: 60,
+        info: 'Fast-food-themed fun.',
+        image: 'https://assets.onecompiler.app/4386r6d8v/43c3mrcry/New%20Project%20(100).png'
+      },
+    ];
+    // Populate the grid
+    function loadProducts() {
+      const grid = document.getElementById('productsGrid');
+      products.forEach(product => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'grid-item';
+        itemDiv.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <p>${product.name}</p>
+        `;
+        // On click, go to buy.html?id=xxx
+        itemDiv.addEventListener('click', () => {
+          window.location.href = 'buy.html?id=' + product.id;
+        });
+        grid.appendChild(itemDiv);
+      });
+    }
+    // Toggle the cart popup
+    function toggleCartPopup() {
+      const popup = document.getElementById('cartPopup');
+      if (popup.style.display === 'none' || popup.style.display === '') {
+        openCartPopup();
+      } else {
+        popup.style.display = 'none';
+      }
+    }
+    // Force open and load the popup
+    function openCartPopup() {
+      document.getElementById('cartPopup').style.display = 'block';
+      loadCartPopup();
+    }
+    // Load cart data
+    function loadCartPopup() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      document.getElementById('cartCountPopup').textContent = cart.length;
+      const cartItemsDiv = document.getElementById('cartItemsPopup');
+      cartItemsDiv.innerHTML = '';
+      let totalPrice = 0;
+      cart.forEach((item, index) => {
+        totalPrice += item.price;
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" class="cart-item-image" />
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">${item.price} Kč</div>
+          </div>
+          <div class="cart-item-remove" onclick="removeItemFromCart(${index})">×</div>
+        `;
+        cartItemsDiv.appendChild(itemDiv);
+      });
+      document.getElementById('itemCountPopup').textContent = cart.length;
+      document.getElementById('totalPricePopup').textContent = totalPrice + ' Kč';
+    }
+    // Remove an item
+    function removeItemFromCart(index) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCartPopup();
+      updateCartCount();
+    }
+    // Update the cart count in the header
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      document.getElementById('cartCount').textContent = cart.length;
+    }
+    // On page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProducts();
+      updateCartCount();
+    });
+    // Cart icon toggles popup
+    document.getElementById('cartIcon').addEventListener('click', toggleCartPopup);
+    // "Koupit" button in popup
+    document.getElementById('buyButtonPopup').addEventListener('click', () => {
+      alert('Proceeding to checkout...');
+    });
+  </script>
+</body>
+</html>
